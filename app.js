@@ -4,20 +4,51 @@ const port = 3000
 const mongoose = require('mongoose');
 
 const MyData = require('./models/myDataSchema');
+app.use(express.static('public'))
+
+
+
+// ------------------------- Auto refresh ---------------------------- //
+const path = require("path");
+const livereload = require("livereload");
+const liveReloadServer = livereload.createServer();
+liveReloadServer.watch(path.join(__dirname, 'public'));
+
+const connectLivereload = require("connect-livereload");
+app.use(connectLivereload());
+
+liveReloadServer.server.once("connection", () => {
+    setTimeout(() => {
+        liveReloadServer.refresh("/");
+    }, 1);
+});
+
+
+// ------------------------- ejs ---------------------------- //
 
 app.use(express.urlencoded({ extended: true }))
 app.set('view engine', 'ejs')
 
-app.get('/', (req, res) => {
-    // res.sendFile('./views/home.html', { root: __dirname })
-    MyData.find().then((result) => {
-        console.log(result)
-        console.log("result")
-    }).catch(() => {
 
-    })
-    res.render('home', { myTitle: "Home Page" })
+// ------------------------- routs ---------------------------- //
+
+app.get('/', (req, res) => {
+    res.render('index', {})
 })
+
+app.get('/user/add', (req, res) => {
+    res.render('user/add', {})
+})
+
+app.get('/user/view', (req, res) => {
+    res.render('user/view', {})
+})
+
+app.get('/user/edit', (req, res) => {
+    res.render('user/edit', {})
+})
+
+// --------------------------------------------------------- //
 
 mongoose.connect('mongodb+srv://dash_node:HrMgqCO4HXd0YUEh@cluster0.vidmubj.mongodb.net/all-data?retryWrites=true&w=majority&appName=Cluster0').then(() => {
     app.listen(port, () => {
