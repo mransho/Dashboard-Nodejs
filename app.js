@@ -3,7 +3,7 @@ const app = express()
 const port = 3000
 const mongoose = require('mongoose');
 
-const MyData = require('./models/myDataSchema');
+const User = require('./models/customersSchema.js');
 app.use(express.static('public'))
 
 
@@ -30,23 +30,45 @@ app.use(express.urlencoded({ extended: true }))
 app.set('view engine', 'ejs')
 
 
-// ------------------------- routs ---------------------------- //
+// ------------------------- GET Request---------------------------- //
 
 app.get('/', (req, res) => {
-    res.render('index', {})
+    User.find().then((result) => {
+        res.render('index', { arr: result })
+    }).catch((err) => {
+        console.log(err)
+    })
 })
 
 app.get('/user/add', (req, res) => {
     res.render('user/add', {})
 })
 
-app.get('/user/view', (req, res) => {
-    res.render('user/view', {})
+app.get('/user/:id', (req, res) => {
+    User.findById(req.params.id)
+        .then((result) => {
+            res.render('user/view', { data: result })
+        })
+        .catch((err) => { console.log(err) })
 })
 
 app.get('/user/edit', (req, res) => {
     res.render('user/edit', {})
 })
+
+// ------------------------- POST Request---------------------------- //
+
+app.post('/user/add', async (req, res) => {
+    console.log(req.body)
+    const user = new User(req.body)
+    user.save().then(() => {
+        res.redirect('/user/add')
+    }).catch((err) => {
+        console(err)
+    })
+})
+
+
 
 // --------------------------------------------------------- //
 
