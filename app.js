@@ -1,6 +1,9 @@
 const express = require('express')
 const app = express()
 const mongoose = require('mongoose');
+require('dotenv').config();
+
+
 const port = process.env.PORT || 3001;
 
 app.use(express.static('public'))
@@ -38,7 +41,7 @@ app.set('view engine', 'ejs')
 
 // --------------------------------------------------------- //
 
-mongoose.connect('mongodb+srv://dash_node:HrMgqCO4HXd0YUEh@cluster0.vidmubj.mongodb.net/all-data?retryWrites=true&w=majority&appName=Cluster0').then(() => {
+mongoose.connect(process.env.MONGO_URI).then(() => {
     app.listen(port, () => {
         console.log(`http://localhost:${port}/`)
     })
