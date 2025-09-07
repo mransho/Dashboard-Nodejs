@@ -1,12 +1,20 @@
 const express = require('express')
 const app = express()
-const port = 3000
 const mongoose = require('mongoose');
+const port = process.env.PORT || 3001;
 
-const User = require('./models/customersSchema.js');
 app.use(express.static('public'))
 
+var methodOverride = require('method-override')
+app.use(methodOverride('_method'))
 
+
+app.use(express.urlencoded({ extended: true })); 
+app.use(express.json());
+
+
+const routers = require('./routes/router')
+app.use(routers)
 
 // ------------------------- Auto refresh ---------------------------- //
 const path = require("path");
@@ -25,50 +33,8 @@ liveReloadServer.server.once("connection", () => {
 
 
 // ------------------------- ejs ---------------------------- //
-
 app.use(express.urlencoded({ extended: true }))
 app.set('view engine', 'ejs')
-
-
-// ------------------------- GET Request---------------------------- //
-
-app.get('/', (req, res) => {
-    User.find().then((result) => {
-        res.render('index', { arr: result })
-    }).catch((err) => {
-        console.log(err)
-    })
-})
-
-app.get('/user/add', (req, res) => {
-    res.render('user/add', {})
-})
-
-app.get('/user/:id', (req, res) => {
-    User.findById(req.params.id)
-        .then((result) => {
-            res.render('user/view', { data: result })
-        })
-        .catch((err) => { console.log(err) })
-})
-
-app.get('/user/edit', (req, res) => {
-    res.render('user/edit', {})
-})
-
-// ------------------------- POST Request---------------------------- //
-
-app.post('/user/add', async (req, res) => {
-    console.log(req.body)
-    const user = new User(req.body)
-    user.save().then(() => {
-        res.redirect('/user/add')
-    }).catch((err) => {
-        console(err)
-    })
-})
-
-
 
 // --------------------------------------------------------- //
 

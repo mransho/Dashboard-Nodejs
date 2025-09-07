@@ -9,8 +9,11 @@ const userSchema = new Schema({
     Age: Number,
     Country: String,
     Gender: String,
+    createdAt: Date,
+    updatedAt: Date
 },
     { timestamps: true }
+
 )
 
 

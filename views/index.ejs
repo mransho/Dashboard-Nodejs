@@ -40,12 +40,8 @@
                   <th scope="col">Action</th>
                 </tr>
               </thead>
-
-
               <tbody>
-
                 <% arr.forEach(( item , index )=> { %>
-
                   <tr>
                     <th scope="row">
                       <%= index + 1 %>
@@ -64,24 +60,28 @@
                       <%= item.Age %>
                     </td>
                     <td>
-                      <%= item.Age %>
+                      <%= moment(item.updatedAt).format('MMMM Do YYYY, h:mm:ss a') %>
+
                     </td>
                     <td>
-                      <%= item.Age %>
+                      <%= moment(item.createdAt).format('MMMM Do YYYY, h:mm:ss a') %>
                     </td>
 
                     <td>
                       <a data-bs-toggle="tooltip" data-bs-title="View details" data-bs-placement="top"
-                        class="btn btn-primary btn-sm" href="./user/<%= item._id %>"><i class="bi bi-eye"></i></a>
+                        class="btn btn-primary btn-sm" href="./view/<%= item._id %>"><i class="bi bi-eye"></i></a>
 
                       <a data-bs-toggle="tooltip" data-bs-title="Edit user" data-bs-placement="top"
-                        class="btn btn-primary btn-sm" href="./user/edit">
+                        class="btn btn-primary btn-sm" href="./edit/<%= item._id %>">
                         <i class="bi bi-pencil"></i>
                       </a>
-                      <button data-bs-toggle="tooltip" data-bs-title="Delete user" data-bs-placement="top"
-                        class="btn btn-danger btn-sm">
-                        <i class="bi bi-trash"></i>
-                      </button>
+                      
+                      <form class="d-inline" action="/edit/<%= item._id %>?_method=DELETE" method="post">
+                        <button type="submit" data-bs-toggle="tooltip" data-bs-title="Delete user"
+                          data-bs-placement="top" class="btn btn-danger btn-sm">
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </form>
                     </td>
                   </tr>
                   <% }) %>
