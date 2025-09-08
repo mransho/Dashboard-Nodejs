@@ -3,11 +3,14 @@ const express = require('express')
 const router = express.Router()
 const Controllers = require('../Controllers/Controller')
 
+router.get('/welcome', (req, res) => {
+    res.render("welcome")
+})
 
 
 // ------------------------- GET Request---------------------------- //
 
-router.get('/', Controllers.user_index_get)
+router.get('/home', Controllers.user_index_get)
 
 router.get('/user/add', Controllers.user_add_get)
 

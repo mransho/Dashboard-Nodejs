@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 
-const routers = require('./api/router')
+const routers = require('./routes/router')
 app.use(routers)
 
 // ------------------------- Auto refresh ---------------------------- //
