@@ -18,7 +18,7 @@
         </button>
     </span>
 
-    <a href="/welcome" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
         <i class="bi bi-lightning-charge"></i>
         <span class="fs-4 sidebar-text">Sidebar</span>
     </a>
@@ -48,7 +48,7 @@
         <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
             data-bs-toggle="dropdown" aria-expanded="false">
             <img src="/img/me.JPG" alt="" width="32" height="32" class="rounded-circle me-2" />
-            <strong class="sidebar-text">Ali Hassan</strong>
+            <strong class="sidebar-text"><%= user.UserName %></strong>
         </a>
         <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
             <li><a class="dropdown-item" href="#">New project...</a></li>
@@ -57,7 +57,7 @@
             <li>
                 <hr class="dropdown-divider" />
             </li>
-            <li><a class="dropdown-item" href="#">Sign out</a></li>
+            <li><a class="dropdown-item" href="/signOut">Sign out</a></li>
         </ul>
     </div>
 </div>
