@@ -16,6 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 const routers = require('./routes/router')
 app.use(routers)
+app.use(express.json())
 
 
 

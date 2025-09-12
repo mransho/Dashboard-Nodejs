@@ -1,60 +1,37 @@
 const express = require('express')
 const router = express.Router()
 const Controllers = require('../Controllers/Controller')
-const authUser = require("../models/authUser")
-const bcrypt = require('bcrypt');
+const authController = require('../Controllers/authController')
 let { requireAuth } = require('../middlewares/middleware');
 let { chekIfUser } = require('../middlewares/middleware');
 
-var jwt = require("jsonwebtoken");
 router.use(chekIfUser);
+const { check, validationResult } = require("express-validator");
+
+
 
 // ------------------------- AuthUser Request---------------------------- //
 
-router.get('/signOut', (req, res) => {
-    res.cookie('jwt', '', {
-        maxAge: 1
-    })
-    res.redirect('/')
-})
+router.get('/signOut', authController.signOut_get)
+
+router.get('/Login', authController.Login_get)
+
+router.post('/Login', authController.Login_post)
+
+router.get('/SignUp', authController.SignUp_get)
+
+router.post('/SignUp',
+    [
+        check("Email", "Please provide a valid email").isEmail(),
+        check("Password", "Password must be at least 8 characters with 1 upper case letter and 1 number").matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/),
+    ],
+    authController.SignUp_Post
+)
+
+
 
 router.get('/', (req, res) => {
     res.render("welcome")
-})
-
-
-router.get('/Login', (req, res) => {
-    res.render("auth/Login")
-})
-
-router.post('/Login', async (req, res) => {
-    let logInUser = await authUser.findOne({ Email: req.body.Email })
-
-    if (logInUser == null) {
-        console.log('this user is not registered')
-    } else {
-        const match = await bcrypt.compare(req.body.Password, logInUser.Password)
-        if (match) {
-            let token = jwt.sign({ id: logInUser._id }, "test");
-            res.cookie("jwt", token, { httpOnly: true, maxAge: 86400000 });
-            res.redirect("/home")
-        }
-    }
-
-})
-
-
-router.get('/SignUp', (req, res) => {
-    res.render("auth/SignUp")
-})
-router.post('/SignUp', async (req, res) => {
-    try {
-        let tesult = await authUser.create(req.body)
-        console.log(tesult)
-        res.render("auth/SignUp")
-    } catch (error) {
-        console.log(error)
-    }
 })
 // ------------------------- GET Request---------------------------- //
 router.get('/home', requireAuth, Controllers.user_index_get)

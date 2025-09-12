@@ -164,6 +164,15 @@
             border-bottom-color: #fff;
         }
     </style>
+    <style>
+        .err {
+
+            text-align: start;
+            color: red;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
 </head>
 
 <body class="d-flex h-100 text-center text-bg-dark">
@@ -171,18 +180,30 @@
         <%- include("./header", {page : 'SignUp' }) %>
             <main class="px-3">
                 <h1>SignUp</h1>
-                <form action="/SignUp" method="post">
+                <form id="signupForm">
                     <div class="mb-3">
                         <label for="UserName" class="form-label d-flex">User Name</label>
                         <input type="text" class="form-control" id="UserName" name="UserName">
+                        <p id="errUserName" class="err">
+
+                        </p>
                     </div>
+
+                    <div class="mb-3">
+                        <label for="exampleFormControlInput1" class="form-label d-flex">Email address</label>
+                        <input name="Email" type="text" class="form-control" id="Email">
+                        <p id="errEmail" class="err">
+
+                        </p>
+                    </div>
+
                     <label for="Password" class="mb-3 form-label d-flex">Password</label>
                     <input name="Password" type="password" id="Password" class="form-control"
                         aria-describedby="passwordHelpBlock">
-                    <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label d-flex">Email address</label>
-                        <input name="Email" type="email" class="form-control" id="exampleFormControlInput1">
-                    </div>
+                    <p id="errPassword" class="err">
+
+                    </p>
+
                     <button class="btn btn-primary" type="submit">SignUp</button>
                 </form>
             </main>
@@ -191,6 +212,50 @@
             </footer>
     </div>
     <script src="./js/bootstrap.bundle.min.js"></script>
+    <script>
+        const form = document.querySelector("#signupForm");
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            errEmail.textContent = ""
+            errPassword.textContent = ""
+
+            const res = await fetch("/signup", {
+                method: "POST",
+                body: JSON.stringify({
+                    UserName: UserName.value,
+                    Email: Email.value,
+                    Password: Password.value
+                }),
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const data = await res.json();
+
+            if (data.validationErr) {
+                data.validationErr.forEach(i => {
+                    if (i.path == "Email") {
+                        errEmail.textContent = i.msg
+                    }
+                    if (i.path == "Password") {
+                        errPassword.textContent = i.msg
+                    }
+                });
+            }
+
+            if (data.errEmail) {
+                errEmail.textContent = data.errEmail
+            }
+            if (data.errUserName) {
+                errUserName.textContent = data.errUserName
+            }
+
+            if (data.id) {
+                // console.log(data.id)
+                location.assign('/home')
+            }
+        });
+
+    </script>
 </body>
 
 </html>

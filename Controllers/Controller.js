@@ -25,7 +25,6 @@ let user_edit_get = (req, res) => {
 
 
 let user_view_get = (req, res) => {
-    console.log(req.params.id)
     User.findById(req.params.id)
         .then((result) => {
             res.render('user/view', { data: result, moment: moment })
