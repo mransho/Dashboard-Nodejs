@@ -5,18 +5,15 @@ require('dotenv').config();
 const Customer = require("../models/customersSchema");
 
 const requireAuth = (req, res, next) => {
-
     const token = req.cookies.jwt
-    if (token) {
-        jwt.verify(token, process.env.JWT_SECRET_KEY, (err) => {
-            if (err) {
-                res.redirect("Login")
-            } else {
-                next()
-            }
-        });
-    } else {
-        res.redirect("Login")
+    if (!token) return res.redirect("/Login");
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+        req.user = decoded;
+        next();
+    } catch (err) {
+        console.error("JWT Error:", err.message);
+        return res.redirect("/Login");
     }
 }
 const chekIfUser = async (req, res, next) => {

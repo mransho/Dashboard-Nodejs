@@ -1,21 +1,23 @@
 const customer = require('../models/customersSchema.js');
 var moment = require('moment');
-
-
 const jwt = require("jsonwebtoken");
 const User = require("../models/authUser.js");
 require('dotenv').config();
-// ------------------------- GET Request---------------------------- //
 
+const customerQuery = (id, userId) => ({
+    _id: id,
+    $or: [{ Creator: userId }, { usersIds: userId }]
+});
+
+// ------------------------- GET Request---------------------------- //
 let customer_index_get = async (req, res) => {
     try {
-        const token = req.cookies.jwt;
-        const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+
 
         const customers = await customer.find({
             $or: [
-                { Creator: decoded.id },
-                { usersIds: decoded.id }
+                { Creator: req.user.id },
+                { usersIds: req.user.id }
             ]
         })
             .populate("Creator", "UserName")
@@ -31,34 +33,18 @@ let customer_add_get = (req, res) => {
 }
 
 let customer_edit_get = async (req, res) => {
-    const token = req.cookies.jwt;
-    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+
     const users = await User.find({}, "UserName _id");
-    customer.findOne({
-        _id: req.params.id,
-        $or: [
-            { Creator: decoded.id },
-            { usersIds: decoded.id }
-        ]
-    })
+    customer.findOne(
+        customerQuery(req.params.id, req.user.id)
+    )
         .then((result) => {
             res.render('user/edit', { data: result, moment: moment, users: users })
         })
         .catch((err) => { console.log(err) })
 }
-
-
 let customer_view_get = (req, res) => {
-    const token = req.cookies.jwt;
-    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-
-    customer.findOne({
-        _id: req.params.id,
-        $or: [
-            { Creator: decoded.id },
-            { usersIds: decoded.id }
-        ]
-    })
+    customer.findOne(customerQuery(req.params.id, req.user.id))
         .then((result) => {
             res.render('user/view', { data: result, moment: moment })
         })
@@ -68,8 +54,6 @@ let customer_view_get = (req, res) => {
 
 // ------------------------- POST Request---------------------------- //
 let customer_add_POST = async (req, res) => {
-    const token = req.cookies.jwt;
-    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
     try {
         let usersIds = [];
         if (req.body.usersIds) {
@@ -89,7 +73,7 @@ let customer_add_POST = async (req, res) => {
             Country: req.body.Country || "",
             Gender: req.body.Gender || "",
             usersIds: usersIds,
-            Creator: decoded.id
+            Creator: req.user.id
         });
         res.redirect('/user/add');
     } catch (err) {
@@ -97,34 +81,10 @@ let customer_add_POST = async (req, res) => {
     }
 };
 
-// let customer_search_POST = (req, res) => {
-//     const token = req.cookies.jwt;
-//     if (!token) return res.redirect("/login");
-//     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-//     let search = req.body.search.trim()
-//     customer.find({
-//         $or: [
-//             { FirstName: { $regex: search, $options: "i" } },
-//             { LastName: { $regex: search, $options: "i" } },
-//             { Email: { $regex: search, $options: "i" } },
-//             { Telephone: { $regex: search, $options: "i" } },
-//         ]
-//     }).then((result) => {
-
-//         res.render('user/search', { result: result, moment: moment })
-//     }).catch((err) => {
-//         console.log(err)
-//     })
-// }
 
 let customer_search_POST = async (req, res) => {
     try {
-        const token = req.cookies.jwt;
-        if (!token) return res.redirect("/login");
-        const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-
         const search = req.body.search.trim();
-
         const result = await customer.find({
             $and: [
                 {
@@ -137,8 +97,8 @@ let customer_search_POST = async (req, res) => {
                 },
                 {
                     $or: [
-                        { Creator: decoded.id },
-                        { usersIds: decoded.id }
+                        { Creator: req.user.id },
+                        { usersIds: req.user.id }
                     ]
                 }
             ]
@@ -157,15 +117,8 @@ let customer_search_POST = async (req, res) => {
 
 
 let customer_index_delete = (req, res) => {
-    const token = req.cookies.jwt;
-    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    customer.findOneAndDelete({
-        _id: req.params.id,
-        $or: [
-            { Creator: decoded.id },
-            { usersIds: decoded.id }
-        ]
-    })
+
+    customer.findOneAndDelete(customerQuery(req.params.id, req.user.id))
         .then((result) => {
             res.redirect('/')
         })
@@ -177,19 +130,7 @@ let customer_index_delete = (req, res) => {
 let customer_edit_PUT = (req, res) => {
     let body = req.body;
     body.usersIds = JSON.parse(body.usersIds || "[]");
-
-    const token = req.cookies.jwt;
-    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-
-    customer.findOneAndUpdate(
-        {
-            _id: req.params.id,
-            $or: [
-                { Creator: decoded.id },
-                { usersIds: decoded.id }
-            ]
-        }
-        , body)
+    customer.findOneAndUpdate(customerQuery(req.params.id, req.user.id), body)
         .then((result) => {
             res.redirect(`/home`)
         })

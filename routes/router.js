@@ -41,9 +41,9 @@ router.get('/view/:id', requireAuth, checkIfAccess, Controllers.customer_view_ge
 // ------------------------- POST Request---------------------------- //
 router.post('/user/add', Controllers.customer_add_POST)
 
-router.post('/search', Controllers.customer_search_POST)
+router.post('/search', requireAuth, Controllers.customer_search_POST)
 // ------------------------- delete Request---------------------------- //
-router.delete('/edit/:id', Controllers.customer_index_delete)
+router.delete('/edit/:id', requireAuth, checkIfAccess, Controllers.customer_index_delete)
 // ------------------------- PUT Request---------------------------- //
-router.put('/edit/:id', Controllers.customer_edit_PUT)
+router.put('/edit/:id', requireAuth, checkIfAccess, Controllers.customer_edit_PUT)
 module.exports = router
