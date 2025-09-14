@@ -3,7 +3,14 @@ const Schema = mongoose.Schema
 const AuthUserSchema = new Schema({
     UserName: String,
     Email: String,
-    Password: String
+    Password: String,
+    validCustomers_Ids: [
+        { id: String }
+    ],
+    mineCustomers_Ids: [
+        { id: String }
+    ],
+
 }, { timestamps: true })
 
 // =================================== Hash Password =====================================
