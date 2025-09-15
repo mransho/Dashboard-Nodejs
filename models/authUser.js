@@ -4,13 +4,13 @@ const AuthUserSchema = new Schema({
     UserName: String,
     Email: String,
     Password: String,
+    ProfileImage: String,
     validCustomers_Ids: [
         { id: String }
     ],
     mineCustomers_Ids: [
         { id: String }
     ],
-
 }, { timestamps: true })
 
 // =================================== Hash Password =====================================

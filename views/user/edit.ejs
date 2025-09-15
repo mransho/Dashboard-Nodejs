@@ -36,6 +36,7 @@
       background-color: #007bff;
       color: white;
     }
+
     .creatorSpan {
       opacity: .5;
       cursor: no-drop;
@@ -45,183 +46,176 @@
 
 <body>
   <%- include('../Component/dark-light.ejs') %>
-    <main class="d-flex flex-nowrap">
-      <%- include('../Component/Sidebar.ejs', {currentPage:'index'}) %>
+  <main class="d-flex flex-nowrap">
+    <%- include('../Component/Sidebar.ejs', {currentPage:'index'}) %>
 
-        <section class="w-100">
-          <%- include('../Component/navbar.ejs') %>
-            <nav class="px-2 mt-4 d-flex flex-wrap justify-content-between" aria-label="breadcrumb">
-              <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/home">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">
-                  <%= data.FirstName %>
-                    <%= data.LastName %>
-                </li>
-              </ol>
-              <p class="me-md-5"> <span class="fw-medium fs-6">Id :</span>
-                <%= data._id %>
-              </p>
-            </nav>
+    <section class="w-100">
+      <%- include('../Component/navbar.ejs') %>
+      <nav class="px-2 mt-4 d-flex flex-wrap justify-content-between" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/home">Home</a></li>
+          <li class="breadcrumb-item active" aria-current="page">
+            <%= data.FirstName %>
+            <%= data.LastName %>
+          </li>
+        </ol>
+        <p class="me-md-5"> <span class="fw-medium fs-6">Id :</span>
+          <%= data._id %>
+        </p>
+      </nav>
 
-            <form action="/edit/<%= data._id %>?_method=PUT" method="post" class="mx-0 row gx-3 gy-4 mt-2">
-              <div class="col-md-6">
-                <label for="inputfirstName4" class="form-label">First Name:</label>
-                <input name="FirstName" value="<%= data.FirstName %>" type="text" class="form-control"
-                  id="inputfirstName4" />
-              </div>
-              <div class="col-md-6">
-                <label for="inputlastName4" class="form-label">Last Name:</label>
-                <input name="LastName" value="<%= data.LastName %>" type="text" class="form-control"
-                  id="inputlastName4" />
-              </div>
+      <form action="/edit/<%= data._id %>?_method=PUT" method="post" class="mx-0 row gx-3 gy-4 mt-2">
+        <div class="col-md-6">
+          <label for="inputfirstName4" class="form-label">First Name:</label>
+          <input name="FirstName" value="<%= data.FirstName %>" type="text" class="form-control" id="inputfirstName4" />
+        </div>
+        <div class="col-md-6">
+          <label for="inputlastName4" class="form-label">Last Name:</label>
+          <input name="LastName" value="<%= data.LastName %>" type="text" class="form-control" id="inputlastName4" />
+        </div>
 
-              <div class="col-md-6">
-                <label for="inputemail4" class="form-label">Email:</label>
-                <input name="Email" value="<%= data.Email %>" type="email" class="form-control" id="inputemail4" />
-              </div>
-              <div class="col-md-6">
-                <label for="inputtele4" class="form-label">Telephone:</label>
-                <input name="Telephone" value="<%= data.Telephone %>" type="number" class="form-control"
-                  id="inputtele4" />
-              </div>
+        <div class="col-md-6">
+          <label for="inputemail4" class="form-label">Email:</label>
+          <input name="Email" value="<%= data.Email %>" type="email" class="form-control" id="inputemail4" />
+        </div>
+        <div class="col-md-6">
+          <label for="inputtele4" class="form-label">Telephone:</label>
+          <input name="Telephone" value="<%= data.Telephone %>" type="number" class="form-control" id="inputtele4" />
+        </div>
 
-              <div class="col-md-6">
-                <div class="col-md-6">
-                  <label for="inputage4" class="form-label">Age:</label>
-                  <input name="Age" value="<%= data.Age %>" type="number" class="form-control" id="inputage4" />
-                </div>
-              </div>
-
-              <div class="col-md-6">
-                <div class="col-md-6">
-                  <label for="inputCountry" class="form-label">Country:</label>
-                  <select name="Country" id="inputCountry" class="form-select">
-                    <% ['Morocco','Egypt'].forEach(element=> { %>
-                      <option <%=element===data.Country ? 'selected' : null %> ><%= data.Country %>
-                      </option>
-                      <% }) %>
-                  </select>
-                </div>
-              </div>
-
-              <div class="col-md-6">
-                <div class="col-md-6">
-                  <label for="inputGender" class="form-label">Gender:</label>
-                  <select name="Gender" id="inputGender" class="form-select">
-                    <% ['Male','Female'].forEach(element=> { %>
-                      <option <%=element===data.Gender ? 'selected' : null %> ><%= data.Gender %>
-                      </option>
-                      <% }) %>
-                  </select>
-                </div>
-              </div>
-              <div>
-
-                <%= data.usersIds %>
-                  <div id="selectedUsersPreview"></div>
-
-                  <div class="col-md-6">
-                    <label for="inputGender" class="form-label">Mutual Users:</label>
-                    <div id="usersList">
-                      <% users.forEach(item=> { %>
-                        <span class="user-span" data-id="<%= item._id %>">
-                          <%= item.UserName %>
-                        </span>
-                        <% }) %>
-                    </div>
-                    <input type="hidden" name="usersIds" id="usersIds">
-                  </div>
-              </div>
-
-              <div class="col-12">
-                <button type="submit" class="btn btn-primary">
-                  Update changes
-                </button>
-
-
-
-
-                <button data-bs-toggle="modal" data-bs-target="#exampleModal" type="button" class="btn btn-danger">
-                  Delete Customer
-                </button>
-              </div>
-            </form>
-        </section>
-
-        <!-- Modal -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">
-                  Delete Customer
-                </h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">Are you sure you want to continue delete the customer?</div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                  Close
-                </button>
-                <form action="/edit/<%= data._id %>?_method=DELETE" method="post">
-                  <button type="submit" class="btn btn-danger">
-                    Delete
-                  </button>
-                </form>
-              </div>
-            </div>
+        <div class="col-md-6">
+          <div class="col-md-6">
+            <label for="inputage4" class="form-label">Age:</label>
+            <input name="Age" value="<%= data.Age %>" type="number" class="form-control" id="inputage4" />
           </div>
         </div>
-    </main>
-    <script src="../js/bootstrap.bundle.min.js"></script>
 
-    <script src="../js/sidebars.js"></script>
-    <script src="../js/main.js"></script>
+        <div class="col-md-6">
+          <div class="col-md-6">
+            <label for="inputCountry" class="form-label">Country:</label>
+            <select name="Country" id="inputCountry" class="form-select">
+              <% ['Morocco','Egypt'].forEach(element=> { %>
+              <option <%=element===data.Country ? 'selected' : null %>><%= data.Country %>
+              </option>
+              <% }) %>
+            </select>
+          </div>
+        </div>
 
-    <script>
-      const userSpans = document.querySelectorAll(".user-span");
-      const usersIdsInput = document.getElementById("usersIds");
-      const previewDiv = document.getElementById("selectedUsersPreview");
+        <div class="col-md-6">
+          <div class="col-md-6">
+            <label for="inputGender" class="form-label">Gender:</label>
+            <select name="Gender" id="inputGender" class="form-select">
+              <% ['Male','Female'].forEach(element=> { %>
+              <option <%=element===data.Gender ? 'selected' : null %>><%= data.Gender %>
+              </option>
+              <% }) %>
+            </select>
+          </div>
+        </div>
+        <div>
 
-      let selectedUsers = [];
+          <%= data.usersIds %>
+          <div id="selectedUsersPreview"></div>
 
-      let existingUsers = <%- JSON.stringify(data.usersIds) %>;
+          <div class="col-md-6">
+            <label for="inputGender" class="form-label">Mutual Users:</label>
+            <div id="usersList">
+              <% users.forEach(item=> { %>
+              <span class="user-span" data-id="<%= item._id %>">
+                <%= item.UserName %>
+              </span>
+              <% }) %>
+            </div>
+            <input type="hidden" name="usersIds" id="usersIds">
+          </div>
+        </div>
+
+        <div class="col-12">
+          <button type="submit" class="btn btn-primary">
+            Update changes
+          </button>
 
 
-      let creatorId = <%- JSON.stringify(data.Creator) %>;
 
-      const creatorSpan = document.querySelector(`.user-span[data-id='${creatorId}']`);
-      creatorSpan.classList.add('creatorSpan')
 
-      userSpans.forEach(span => {
-        let userId = span.getAttribute("data-id");
+          <button data-bs-toggle="modal" data-bs-target="#exampleModal" type="button" class="btn btn-danger">
+            Delete Customer
+          </button>
+        </div>
+      </form>
+    </section>
 
-        if (existingUsers.includes(userId)) {
-          span.classList.add("selected");
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">
+              Delete Customer
+            </h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">Are you sure you want to continue delete the customer?</div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+              Close
+            </button>
+            <form action="/edit/<%= data._id %>?_method=DELETE" method="post">
+              <button type="submit" class="btn btn-danger">
+                Delete
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="../js/bootstrap.bundle.min.js"></script>
+
+  <script src="../js/sidebars.js"></script>
+  <script src="../js/main.js"></script>
+
+  <script>
+    const userSpans = document.querySelectorAll(".user-span");
+    const usersIdsInput = document.getElementById("usersIds");
+    const previewDiv = document.getElementById("selectedUsersPreview");
+
+    let selectedUsers = [];
+
+    let existingUsers = <%- JSON.stringify(data.usersIds) %>;
+
+
+    let creatorId = <%- JSON.stringify(data.Creator) %>;
+
+    const creatorSpan = document.querySelector(`.user-span[data-id='${creatorId}']`);
+    creatorSpan.classList.add('creatorSpan')
+
+    userSpans.forEach(span => {
+      let userId = span.getAttribute("data-id");
+
+      if (existingUsers.includes(userId)) {
+        span.classList.add("selected");
+        selectedUsers.push(userId);
+      }
+
+      span.addEventListener("click", () => {
+        if (selectedUsers.includes(userId)) {
+          selectedUsers = selectedUsers.filter(id => id !== userId);
+          span.classList.remove("selected");
+        } else {
           selectedUsers.push(userId);
+          span.classList.add("selected");
         }
 
-        span.addEventListener("click", () => {
-          if (userId === creatorId){
-            return console.log("eeeeeeeeeeeeeeeeeeee")
-          }
-
-          if (selectedUsers.includes(userId)) {
-            selectedUsers = selectedUsers.filter(id => id !== userId);
-            span.classList.remove("selected");
-          } else {
-            selectedUsers.push(userId);
-            span.classList.add("selected");
-          }
-
-          usersIdsInput.value = JSON.stringify(selectedUsers);
-          previewDiv.textContent = usersIdsInput.value;
-        });
+        usersIdsInput.value = JSON.stringify(selectedUsers);
+        previewDiv.textContent = usersIdsInput.value;
       });
+    });
 
-      usersIdsInput.value = JSON.stringify(selectedUsers);
-      previewDiv.textContent = usersIdsInput.value;
-    </script>
+    usersIdsInput.value = JSON.stringify(selectedUsers);
+    previewDiv.textContent = usersIdsInput.value;
+  </script>
 
 </body>
 

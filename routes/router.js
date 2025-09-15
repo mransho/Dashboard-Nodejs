@@ -4,22 +4,22 @@ const Controllers = require('../Controllers/Controller')
 const authController = require('../Controllers/authController')
 let { requireAuth } = require('../middlewares/middleware');
 let { chekIfUser, checkIfAccess } = require('../middlewares/middleware');
-
 router.use(chekIfUser);
 const { check, validationResult } = require("express-validator");
 
 
+// -------------------------Update Profile Image---------------------------- //
+
+const multer = require('multer')
+const upload = multer({ storage: multer.diskStorage({}) });
+router.post('/updateProfile', upload.single('avatar'), authController.User_Profile_Image)
 
 // ------------------------- AuthUser Request---------------------------- //
 
 router.get('/signOut', authController.signOut_get)
-
 router.get('/Login', authController.Login_get)
-
 router.post('/Login', authController.Login_post)
-
 router.get('/SignUp', authController.SignUp_get)
-
 router.post('/SignUp',
     [
         check("Email", "Please provide a valid email").isEmail(),
@@ -27,9 +27,6 @@ router.post('/SignUp',
     ],
     authController.SignUp_Post
 )
-
-
-
 router.get('/', (req, res) => {
     res.render("welcome")
 })
@@ -39,7 +36,7 @@ router.get('/user/add', requireAuth, Controllers.customer_add_get)
 router.get('/edit/:id', requireAuth, checkIfAccess, Controllers.customer_edit_get)
 router.get('/view/:id', requireAuth, checkIfAccess, Controllers.customer_view_get)
 // ------------------------- POST Request---------------------------- //
-router.post('/user/add', Controllers.customer_add_POST)
+router.post('/user/add',requireAuth, Controllers.customer_add_POST)
 
 router.post('/search', requireAuth, Controllers.customer_search_POST)
 // ------------------------- delete Request---------------------------- //

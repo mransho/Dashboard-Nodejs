@@ -3,17 +3,13 @@ var moment = require('moment');
 const jwt = require("jsonwebtoken");
 const User = require("../models/authUser.js");
 require('dotenv').config();
-
 const customerQuery = (id, userId) => ({
     _id: id,
     $or: [{ Creator: userId }, { usersIds: userId }]
 });
-
 // ------------------------- GET Request---------------------------- //
 let customer_index_get = async (req, res) => {
     try {
-
-
         const customers = await customer.find({
             $or: [
                 { Creator: req.user.id },
@@ -27,13 +23,10 @@ let customer_index_get = async (req, res) => {
         console.log(err);
     }
 }
-
 let customer_add_get = (req, res) => {
     res.render('user/add', {})
 }
-
 let customer_edit_get = async (req, res) => {
-
     const users = await User.find({}, "UserName _id");
     customer.findOne(
         customerQuery(req.params.id, req.user.id)
@@ -50,8 +43,6 @@ let customer_view_get = (req, res) => {
         })
         .catch((err) => { console.log(err) })
 }
-
-
 // ------------------------- POST Request---------------------------- //
 let customer_add_POST = async (req, res) => {
     try {
@@ -80,8 +71,6 @@ let customer_add_POST = async (req, res) => {
         console.log(err);
     }
 };
-
-
 let customer_search_POST = async (req, res) => {
     try {
         const search = req.body.search.trim();
@@ -112,24 +101,19 @@ let customer_search_POST = async (req, res) => {
         res.status(500).send("Something went wrong");
     }
 };
-
 // ------------------------- delete Request---------------------------- //
-
-
 let customer_index_delete = (req, res) => {
-
     customer.findOneAndDelete(customerQuery(req.params.id, req.user.id))
         .then((result) => {
             res.redirect('/')
         })
         .catch((err) => { console.log(err) })
 }
-
 // ------------------------- PUT Request---------------------------- //
-
 let customer_edit_PUT = (req, res) => {
     let body = req.body;
     body.usersIds = JSON.parse(body.usersIds || "[]");
+
     customer.findOneAndUpdate(customerQuery(req.params.id, req.user.id), body)
         .then((result) => {
             res.redirect(`/home`)
@@ -137,7 +121,6 @@ let customer_edit_PUT = (req, res) => {
         .catch((err) => { console.log(err) })
 }
 // ------------------------------------------------------------------------- //
-
 module.exports = {
     customer_index_get,
     customer_add_get,

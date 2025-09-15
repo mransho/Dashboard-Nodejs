@@ -14,17 +14,11 @@ let signOut_get = (req, res) => {
     })
     res.redirect('/')
 }
-
-
-
 let Login_get = (req, res) => {
     res.render("auth/Login")
 }
-
 let Login_post = async (req, res) => {
     const loginUser = await authUser.findOne({ Email: req.body.Email })
-
-
     if (loginUser == null) {
         return res.json({ errEmail: "this user is not registered" })
     } else {
@@ -38,11 +32,9 @@ let Login_post = async (req, res) => {
         }
     }
 }
-
 let SignUp_get = (req, res) => {
     res.render("auth/SignUp")
 }
-
 let SignUp_Post =
     async (req, res) => {
         try {
@@ -75,12 +67,32 @@ let SignUp_Post =
         }
     }
 
-// ------------------------------------------------------------------------- //
-
+// -------------------------Update Profile Image---------------------------- //
+const cloudinary = require('cloudinary').v2
+cloudinary.config({
+    cloud_name: process.env.cloud_name,
+    api_key: process.env.api_key,
+    api_secret: process.env.api_secret
+});
+const User_Profile_Image =  (req, res, next) => {
+    cloudinary.uploader.upload(req.file.path, (error, result) => {
+        const token = req.cookies.jwt
+        const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+        authUser.findOneAndUpdate({ _id: decoded.id }, { ProfileImage: result.secure_url })
+            .then(() => {
+                res.redirect(`/home`)
+            })
+            .catch((err) => { 
+                console.log(err)
+             })
+    });
+}
+// ---------------------------------------------------------------------------------------------------------- //
 module.exports = {
     signOut_get,
     Login_get,
     Login_post,
     SignUp_get,
     SignUp_Post,
+    User_Profile_Image
 }
